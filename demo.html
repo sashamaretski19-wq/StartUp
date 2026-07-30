@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Мини-дек по твоим цифрам · Growth &amp; Unit-Economics Audit</title>
+<meta name="description" content="Введи удержание когорты, CAC по каналам, чек и стоимость инференса — получи три страницы мини-дека: условие сходимости, список допущений и порядок рычагов. Всё считается в браузере.">
+<meta name="robots" content="index,follow">
+<link rel="alternate" hreflang="ru" href="demo.html">
+<link rel="alternate" hreflang="en" href="demo-en.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23E8503A'/><path d='M7 22h3.4v-6.2H7zm5.8 0h3.4V10h-3.4zm5.8 0H22V6h-3.4z' fill='%23fff'/></svg>">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Мини-дек по твоим цифрам">
+<meta property="og:description" content="Три страницы расчёта из твоих чисел: где сходится, на каких допущениях и что двигать первым.">
+<meta property="og:image" content="images/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+// Ставим тему до первой отрисовки, иначе при тёмной системной теме мигнёт светлый фон.
+(function(){
+  var root = document.documentElement;
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function stored(){ try { return localStorage.getItem('theme'); } catch(e){ return null; } }
+  function apply(t){ root.setAttribute('data-theme', t); }
+
+  apply(stored() || (mq.matches ? 'dark' : 'light'));
+
+  var onChange = function(e){ if (!stored()) apply(e.matches ? 'dark' : 'light'); };
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else if (mq.addListener) mq.addListener(onChange);
+
+  window.__toggleTheme = function(){
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    apply(next);
+    try { localStorage.setItem('theme', next); } catch(e){}
+  };
+})();
+</script>
+<style>
+  :root{
+    --bg:#FBFAF8;
+    --surface:#FFFFFF;
+    --ink:#111214;
+    --ink-2:#63676E;
+    --ink-3:#8A8E96;
+    --line:#E6E3DD;
+    --hair:#EFEDE8;
+    --accent:#E8503A;
+    --accent-soft:rgba(232,80,58,.08);
+    --deck-bar:#F6F4F1;
+    --deck-dot:#DCD8D1;
+    --chart-idle:#E9E5DE;
+    --field-bg:#FFFFFF;
+    --cta-bg:#111214;
+    --cta-h:#FFFFFF;
+    --cta-p:#B0B4BA;
+    --cta-small:#7C8189;
+    --cta-border:rgba(255,255,255,.2);
+    --cta-border-hi:rgba(255,255,255,.48);
+    --ok:#1F8A5B;
+    --shadow:0 24px 60px -34px rgba(17,18,20,.45);
+    --maxw:1120px;
+  }
+
+  :root[data-theme="dark"]{
+    --bg:#0E0F11;
+    --surface:#16171A;
+    --ink:#F3F2EF;
+    --ink-2:#9DA1A9;
+    --ink-3:#787D85;
+    --line:#282A2E;
+    --hair:#212327;
+    --accent:#FF6B52;
+    --accent-soft:rgba(255,107,82,.12);
+    --deck-bar:#1D1F23;
+    --deck-dot:#383B41;
+    --chart-idle:#2A2D32;
+    --field-bg:#1B1D21;
+    --cta-bg:#16171A;
+    --cta-h:#F3F2EF;
+    --cta-p:#9DA1A9;
+    --cta-small:#737880;
+    --cta-border:rgba(255,255,255,.16);
+    --cta-border-hi:rgba(255,255,255,.4);
+    --ok:#3FBE86;
+    --shadow:0 24px 60px -34px rgba(0,0,0,.9);
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme]){
+      --bg:#0E0F11;
+      --surface:#16171A;
+      --ink:#F3F2EF;
+      --ink-2:#9DA1A9;
+      --ink-3:#787D85;
+      --line:#282A2E;
+      --hair:#212327;
+      --accent:#FF6B52;
+      --accent-soft:rgba(255,107,82,.12);
+      --deck-bar:#1D1F23;
+      --deck-dot:#383B41;
+      --chart-idle:#2A2D32;
+      --field-bg:#1B1D21;
+      --cta-bg:#16171A;
+      --cta-h:#F3F2EF;
+      --cta-p:#9DA1A9;
+      --cta-small:#737880;
+      --cta-border:rgba(255,255,255,.16);
+      --cta-border-hi:rgba(255,255,255,.4);
+      --ok:#3FBE86;
+      --shadow:0 24px 60px -34px rgba(0,0,0,.9);
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font:400 19px/1.62 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  p{margin:0;}
+  a{color:inherit;}
+
+  h1,h2,h3{margin:0;font-weight:600;}
+  h1{font-size:clamp(38px,5.4vw,68px);line-height:1.05;letter-spacing:-.035em;max-width:16ch;}
+  h2{font-size:clamp(28px,3.8vw,44px);line-height:1.08;letter-spacing:-.03em;max-width:21ch;}
+  h3{font-size:21px;line-height:1.22;letter-spacing:-.018em;}
+  h1 em{font-style:normal;color:var(--accent);}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  section{padding:104px 0;}
+  section + section{border-top:1px solid var(--hair);}
+
+  .eyebrow{
+    display:block;
+    font-size:13px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:26px;
+  }
+  .lede{font-size:23px;line-height:1.45;color:var(--ink-2);max-width:50ch;letter-spacing:-.012em;}
+  .sect-lede{margin-top:24px;font-size:20px;line-height:1.5;color:var(--ink-2);max-width:56ch;}
+
+  /* ---------- top bar ---------- */
+  .topbar{padding:30px 0 0;}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .back{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:14.5px;font-weight:500;text-decoration:none;color:var(--ink-3);
+    transition:color .16s ease;
+  }
+  .back:hover{color:var(--ink);}
+  .tools{display:flex;align-items:center;gap:6px;}
+  .lang{display:flex;gap:2px;}
+  .lang a{
+    padding:6px 14px;border-radius:100px;
+    font-size:13px;font-weight:600;letter-spacing:.04em;
+    text-decoration:none;color:var(--ink-3);
+  }
+  .lang a[aria-current="true"]{background:var(--accent);color:#fff;}
+  .theme-btn{
+    display:flex;align-items:center;justify-content:center;
+    width:34px;height:34px;padding:0;
+    border:1px solid var(--line);border-radius:50%;
+    background:transparent;color:var(--ink-2);cursor:pointer;
+    transition:border-color .16s ease,color .16s ease;
+  }
+  .theme-btn:hover{border-color:var(--ink-3);color:var(--ink);}
+  .theme-btn svg{width:16px;height:16px;display:block;}
+  .theme-btn .i-sun{display:none;}
+  :root[data-theme="dark"] .theme-btn .i-sun{display:block;}
+  :root[data-theme="dark"] .theme-btn .i-moon{display:none;}
+
+  /* ---------- hero ---------- */
+  .hero{padding:64px 0 84px;}
+  .hero .wrap{text-align:center;}
+  .hero h1,.hero .lede{margin-left:auto;margin-right:auto;}
+  .hero .lede{margin-top:30px;}
+
+  /* ---------- кнопки ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    padding:16px 30px;
+    background:var(--accent);color:#fff;
+    border:1px solid transparent;border-radius:100px;
+    font-family:inherit;font-size:17px;font-weight:600;text-decoration:none;letter-spacing:-.008em;
+    cursor:pointer;
+    transition:transform .16s ease,opacity .16s ease;
+  }
+  .btn:hover{transform:translateY(-1px);opacity:.92;}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--ink-3);}
+  .btn.sm{padding:11px 20px;font-size:15px;}
+
+  /* ---------- форма ---------- */
+  .builder{max-width:920px;margin:56px auto 0;}
+  .group + .group{margin-top:44px;padding-top:38px;border-top:1px solid var(--hair);}
+  .group > h3{margin-bottom:6px;}
+  .group > .hint{font-size:15.5px;color:var(--ink-3);margin-bottom:28px;line-height:1.55;}
+
+  .fields{display:grid;gap:26px 48px;grid-template-columns:repeat(3,1fr);}
+  .fields.two{grid-template-columns:repeat(2,1fr);}
+  .field label{display:block;font-size:14.5px;font-weight:500;color:var(--ink-2);margin-bottom:8px;}
+  .field .inp{
+    display:flex;align-items:baseline;gap:7px;
+    border-bottom:1px solid var(--line);padding-bottom:8px;
+    transition:border-color .16s ease;
+  }
+  .field .inp:focus-within{border-color:var(--accent);}
+  .field .inp span{font-size:20px;color:var(--ink-3);font-weight:500;line-height:1.1;flex:0 0 auto;}
+  .field input{
+    flex:1;min-width:0;width:100%;
+    border:0;background:transparent;color:var(--ink);
+    font-family:inherit;font-size:24px;font-weight:600;line-height:1.2;
+    letter-spacing:-.024em;font-variant-numeric:tabular-nums;
+    padding:0;outline:none;
+    -moz-appearance:textfield;
+  }
+  .field input[type=text]{font-size:17px;font-weight:500;letter-spacing:-.01em;}
+  .field input::-webkit-outer-spin-button,
+  .field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+
+  .chan{display:grid;gap:16px 32px;grid-template-columns:1.6fr 1fr 1fr;align-items:end;}
+  .chan + .chan{margin-top:22px;}
+  .chan-head{
+    display:grid;gap:32px;grid-template-columns:1.6fr 1fr 1fr;
+    font-size:12.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--ink-3);margin-bottom:14px;
+  }
+  .chan .field label{display:none;}
+  .share-sum{margin-top:18px;font-size:14.5px;color:var(--ink-3);}
+  .share-sum b{color:var(--ink-2);font-weight:600;font-variant-numeric:tabular-nums;}
+  .share-sum.warn b{color:var(--accent);}
+
+  .actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:44px;}
+  .err{
+    margin-top:20px;padding:13px 16px;border-radius:10px;
+    background:var(--accent-soft);color:var(--ink);font-size:15.5px;line-height:1.55;
+  }
+  .err[hidden]{display:none;}
+
+  /* ---------- дек ---------- */
+  .out[hidden]{display:none;}
+  .pages{display:grid;gap:34px;margin-top:56px;}
+  .page{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:16px;overflow:hidden;box-shadow:var(--shadow);
+  }
+  .page-bar{
+    display:flex;gap:6px;align-items:center;
+    padding:13px 17px;border-bottom:1px solid var(--hair);background:var(--deck-bar);
+  }
+  .page-bar i{width:9px;height:9px;border-radius:50%;background:var(--deck-dot);flex:0 0 auto;}
+  .page-bar small{margin-left:10px;font-size:12px;color:var(--ink-3);letter-spacing:.02em;}
+  .page-body{padding:34px;}
+  .page-title{font-size:24px;font-weight:600;margin-bottom:5px;letter-spacing:-.02em;}
+  .page-sub{font-size:14px;color:var(--ink-3);margin-bottom:30px;}
+
+  /* график накопленной окупаемости */
+  .chart-box{position:relative;margin-bottom:10px;}
+  .chart{display:flex;align-items:flex-end;gap:7px;height:180px;}
+  .chart div{flex:1;border-radius:4px 4px 0 0;background:var(--chart-idle);min-height:2px;}
+  .chart div.on{background:var(--accent);}
+  .cacline{
+    position:absolute;left:0;right:0;
+    border-top:1px dashed var(--ink-3);
+    pointer-events:none;
+  }
+  .cacline b{
+    position:absolute;left:0;top:-21px;
+    font-size:11.5px;font-weight:600;letter-spacing:.03em;
+    color:var(--ink-3);background:var(--surface);padding:0 5px;
+    font-variant-numeric:tabular-nums;
+  }
+  .chart-x{display:flex;gap:7px;font-size:11px;color:var(--ink-3);margin-bottom:28px;}
+  .chart-x span{flex:1;text-align:center;}
+
+  .rows{border-top:1px solid var(--hair);}
+  .row{
+    display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+    padding:13px 0;border-bottom:1px solid var(--hair);font-size:15px;
+  }
+  .row > span{color:var(--ink-2);}
+  .row > b{font-weight:600;font-variant-numeric:tabular-nums;text-align:right;}
+  .row b.neg{color:var(--accent);}
+  .row b.pos{color:var(--ok);}
+
+  .verdict{
+    margin-top:26px;padding:22px 24px;border-radius:12px;background:var(--accent-soft);
+  }
+  .verdict .v-text{font-size:clamp(24px,3vw,34px);line-height:1.1;letter-spacing:-.028em;font-weight:600;}
+  /* вердикт-предложение (стр. 3) не должен кричать так же, как вердикт-слово (стр. 1) */
+  .verdict.long .v-text{font-size:clamp(19px,2.1vw,25px);line-height:1.32;letter-spacing:-.018em;}
+  .verdict .v-text.ok{color:var(--ok);}
+  .verdict .v-text.no{color:var(--accent);}
+  .verdict .v-sub{margin-top:10px;font-size:16px;color:var(--ink-2);line-height:1.5;}
+
+  /* страница допущений */
+  .asm{border-top:1px solid var(--hair);}
+  .asm-row{padding:16px 0;border-bottom:1px solid var(--hair);display:grid;gap:6px;}
+  .asm-row b{font-size:15.5px;font-weight:600;letter-spacing:-.01em;}
+  .asm-row span{font-size:15px;color:var(--ink-2);line-height:1.55;}
+  .asm-row em{font-style:normal;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;}
+
+  /* страница рычагов */
+  .lev{border-top:1px solid var(--hair);}
+  .lev-row{
+    display:grid;gap:6px 20px;grid-template-columns:34px 1fr auto;align-items:baseline;
+    padding:20px 0;border-bottom:1px solid var(--hair);
+  }
+  .lev-n{
+    grid-row:span 2;
+    font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--accent);
+    align-self:start;padding-top:4px;
+  }
+  .lev-t{font-size:18.5px;font-weight:600;letter-spacing:-.014em;}
+  .lev-d{font-size:16.5px;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;}
+  .lev-d.zero{color:var(--ink-3);font-weight:500;}
+  .lev-s{grid-column:2 / 4;font-size:15px;color:var(--ink-2);line-height:1.55;}
+  .lev-bar{grid-column:2 / 4;height:5px;border-radius:3px;background:var(--chart-idle);overflow:hidden;margin-top:4px;}
+  .lev-bar i{display:block;height:100%;background:var(--accent);border-radius:3px;}
+  .lev-row.last .lev-t,.lev-row.last .lev-d{color:var(--ink-3);}
+
+  .page-foot{
+    margin-top:24px;padding:15px 17px;border-radius:10px;
+    background:var(--accent-soft);font-size:14px;line-height:1.6;color:var(--ink-2);
+  }
+  .page-foot b{color:var(--ink);}
+
+  .out-note{margin:40px auto 0;font-size:15px;line-height:1.65;color:var(--ink-3);max-width:74ch;}
+  .out-note b{color:var(--ink-2);font-weight:600;}
+  .copied{font-size:14.5px;color:var(--ok);font-weight:600;}
+  .copied[hidden]{display:none;}
+
+  /* ---------- cta ---------- */
+  .cta{background:var(--cta-bg);color:var(--cta-h);border-top:0;}
+  .cta .wrap{text-align:center;}
+  .cta h2{color:var(--cta-h);max-width:19ch;margin:0 auto;}
+  .cta p{color:var(--cta-p);font-size:20px;line-height:1.5;max-width:54ch;margin:26px auto 0;}
+  .cta .links{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:40px;}
+  .cta .btn.ghost{color:var(--cta-h);border-color:var(--cta-border);}
+  .cta .btn.ghost:hover{border-color:var(--cta-border-hi);}
+  .cta small{display:block;margin:36px auto 0;font-size:15.5px;line-height:1.6;color:var(--cta-small);max-width:60ch;}
+
+  footer{padding:40px 0;font-size:14.5px;color:var(--ink-3);border-top:1px solid var(--hair);}
+
+  @media (max-width:900px){
+    body{font-size:17.5px;}
+    section{padding:68px 0;}
+    .hero{padding:44px 0 60px;}
+    .lede{font-size:19px;}
+    .sect-lede{font-size:18px;}
+    .builder{margin-top:40px;}
+    .fields,.fields.two{grid-template-columns:1fr 1fr;gap:22px 28px;}
+    .chan{grid-template-columns:1fr;gap:14px;}
+    .chan + .chan{margin-top:26px;padding-top:22px;border-top:1px dashed var(--hair);}
+    .chan-head{display:none;}
+    .chan .field label{display:block;}
+    .field input{font-size:22px;}
+    .actions .btn{width:100%;}
+    .page-body{padding:24px 20px;}
+    .chart{height:140px;gap:4px;}
+    .chart-x{gap:4px;font-size:10px;}
+    .lev-row{grid-template-columns:26px 1fr;}
+    .lev-d{grid-column:2;text-align:left;}
+    .lev-s,.lev-bar{grid-column:2;}
+    .cta .links{flex-direction:column;}
+    .cta p{font-size:18px;}
+  }
+
+  @media (max-width:520px){
+    .fields,.fields.two{grid-template-columns:1fr;}
+  }
+
+  /* ---------- печать: остаётся только дек ---------- */
+  @media print{
+    :root,:root[data-theme="dark"]{
+      --bg:#fff;--surface:#fff;--ink:#000;--ink-2:#333;--ink-3:#666;
+      --line:#bbb;--hair:#ddd;--accent:#C8402C;--accent-soft:#F6EBE8;
+      --chart-idle:#E4E1DC;--deck-bar:#F3F1EE;--deck-dot:#CFCBC5;--ok:#1F6B49;
+      --shadow:none;
+    }
+    .topbar,.hero,.builder,.cta,footer,.no-print{display:none !important;}
+    section{padding:0;border:0;}
+    body{font-size:14px;}
+    .pages{margin-top:0;gap:0;}
+    .page{border:1px solid #ccc;box-shadow:none;break-inside:avoid;page-break-inside:avoid;}
+    .page + .page{margin-top:16px;break-before:page;page-break-before:always;}
+    .out-note{color:#555;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="wrap">
+    <a class="back" href="index.html">← Growth &amp; Unit-Economics Audit</a>
+    <div class="tools">
+      <button class="theme-btn" id="theme-btn" type="button" aria-label="Переключить светлую и тёмную тему" title="Тема">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
+      </button>
+      <nav class="lang" aria-label="Язык страницы">
+        <a href="demo.html" aria-current="true">РУС</a>
+        <a href="demo-en.html">EN</a>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<header class="hero no-print">
+  <div class="wrap">
+    <span class="eyebrow">Демо · мини-дек</span>
+    <h1>Твои цифры — <em>три страницы</em> расчёта</h1>
+    <p class="lede">
+      Уменьшенная копия того, что я отдаю в аудите: где сходится, на каких допущениях
+      и что двигать первым. Считается прямо здесь, в браузере — ничего никуда не уходит.
+    </p>
+  </div>
+</header>
+
+<section class="no-print">
+  <div class="wrap">
+
+    <form class="builder" id="form" novalidate>
+
+      <div class="group">
+        <h3>Кривая удержания</h3>
+        <p class="hint">
+          Какая доля когорты ещё активна через 1, 3 и 6 месяцев после привлечения.
+          Берётся из твоей когортной таблицы как есть.
+        </p>
+        <div class="fields">
+          <div class="field">
+            <label for="r1">Активны на М1</label>
+            <div class="inp"><input id="r1" type="number" min="1" max="99" step="1" value="62" inputmode="decimal"><span>%</span></div>
+          </div>
+          <div class="field">
+            <label for="r3">Активны на М3</label>
+            <div class="inp"><input id="r3" type="number" min="1" max="99" step="1" value="41" inputmode="decimal"><span>%</span></div>
+          </div>
+          <div class="field">
+            <label for="r6">Активны на М6</label>
+            <div class="inp"><input id="r6" type="number" min="1" max="99" step="1" value="29" inputmode="decimal"><span>%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h3>Привлечение</h3>
+        <p class="hint">
+          До трёх каналов: во сколько обходится платящий пользователь и какая доля бюджета
+          туда уходит. Канал с нулевой долей просто не участвует в расчёте.
+        </p>
+        <div class="chan-head" aria-hidden="true">
+          <div>Канал</div><div>CAC, $</div><div>Доля бюджета, %</div>
+        </div>
+
+        <div class="chan">
+          <div class="field">
+            <label for="ch-name-1">Канал 1</label>
+            <div class="inp"><input id="ch-name-1" type="text" value="Performance" maxlength="24"></div>
+          </div>
+          <div class="field">
+            <label for="ch-cac-1">CAC, $</label>
+            <div class="inp"><span>$</span><input id="ch-cac-1" type="number" min="1" step="1" value="74" inputmode="decimal"></div>
+          </div>
+          <div class="field">
+            <label for="ch-share-1">Доля бюджета, %</label>
+            <div class="inp"><input id="ch-share-1" type="number" min="0" max="100" step="1" value="55" inputmode="decimal"><span>%</span></div>
+          </div>
+        </div>
+
+        <div class="chan">
+          <div class="field">
+            <label for="ch-name-2">Канал 2</label>
+            <div class="inp"><input id="ch-name-2" type="text" value="Инфлюенсеры" maxlength="24"></div>
+          </div>
+          <div class="field">
+            <label for="ch-cac-2">CAC, $</label>
+            <div class="inp"><span>$</span><input id="ch-cac-2" type="number" min="1" step="1" value="96" inputmode="decimal"></div>
+          </div>
+          <div class="field">
+            <label for="ch-share-2">Доля бюджета, %</label>
+            <div class="inp"><input id="ch-share-2" type="number" min="0" max="100" step="1" value="30" inputmode="decimal"><span>%</span></div>
+          </div>
+        </div>
+
+        <div class="chan">
+          <div class="field">
+            <label for="ch-name-3">Канал 3</label>
+            <div class="inp"><input id="ch-name-3" type="text" value="Контент и реферралы" maxlength="24"></div>
+          </div>
+          <div class="field">
+            <label for="ch-cac-3">CAC, $</label>
+            <div class="inp"><span>$</span><input id="ch-cac-3" type="number" min="1" step="1" value="23" inputmode="decimal"></div>
+          </div>
+          <div class="field">
+            <label for="ch-share-3">Доля бюджета, %</label>
+            <div class="inp"><input id="ch-share-3" type="number" min="0" max="100" step="1" value="15" inputmode="decimal"><span>%</span></div>
+          </div>
+        </div>
+
+        <p class="share-sum" id="share-sum">Сумма долей: <b>100%</b></p>
+      </div>
+
+      <div class="group">
+        <h3>Экономика пользователя</h3>
+        <p class="hint">
+          Выручка с активного пользователя за месяц и то, во сколько он обходится по инференсу —
+          вместе с тем, куда эта стоимость движется.
+        </p>
+        <div class="fields">
+          <div class="field">
+            <label for="arpu">Выручка на активного, в месяц</label>
+            <div class="inp"><span>$</span><input id="arpu" type="number" min="0.1" step="0.5" value="20" inputmode="decimal"></div>
+          </div>
+          <div class="field">
+            <label for="inf">Инференс на активного, в месяц</label>
+            <div class="inp"><span>$</span><input id="inf" type="number" min="0" step="0.1" value="5.4" inputmode="decimal"></div>
+          </div>
+          <div class="field">
+            <label for="ig">Инференс, изменение за квартал</label>
+            <div class="inp"><input id="ig" type="number" min="-95" max="100" step="1" value="-8" inputmode="decimal"><span>%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="err" id="err" hidden role="alert"></div>
+
+      <div class="actions">
+        <button class="btn" id="build" type="submit">Собрать дек →</button>
+        <button class="btn ghost sm" id="print" type="button">Печать / PDF</button>
+        <button class="btn ghost sm" id="copylink" type="button">Скопировать ссылку на расчёт</button>
+        <span class="copied" id="copied" hidden>Ссылка скопирована</span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="out" id="out" hidden>
+  <div class="wrap">
+    <div class="pages" id="pages"></div>
+
+    <p class="out-note no-print">
+      <b>Что это не заменяет.</b> Здесь одна усреднённая кривая удержания на всех пользователей,
+      один усреднённый пользователь вместо сегментов и ровно одна вычитаемая статья затрат.
+      В аудите каждое допущение с соседней страницы проверяется на твоих настоящих когортах —
+      поэтому цифра отсюда и цифра из дека будут разными. Этот расчёт показывает логику,
+      а не заменяет её.
+    </p>
+  </div>
+</section>
+
+<section class="cta no-print" id="next">
+  <div class="wrap">
+    <span class="eyebrow">Что дальше</span>
+    <h2>Не сошлось — или сошлось слишком красиво?</h2>
+    <p>
+      Напиши мне с одним вопросом по своему расчёту: почему рычаг встал именно в таком порядке,
+      или какое допущение здесь врёт сильнее всего на твоих данных. Отвечу по делу.
+    </p>
+    <div class="links">
+      <a class="btn" href="https://t.me/A_Marecki" target="_blank" rel="noopener">Написать в Telegram</a>
+      <a class="btn ghost" href="mailto:sasha.maretski19@gmail.com?subject=Вопрос%20по%20мини-деку">sasha.maretski19@gmail.com</a>
+    </div>
+    <small>Работаю с consumer AI компаниями, у которых уже есть выручка. Цену и сроки обсуждаем в переписке — после того, как станет понятно, есть ли предмет.</small>
+  </div>
+</section>
+
+<footer class="no-print">
+  <div class="wrap">Саша Марецкий · <a href="index.html">Growth &amp; Unit-Economics Audit для consumer AI</a></div>
+</footer>
+
+<script>
+document.getElementById('theme-btn').addEventListener('click', function(){ window.__toggleTheme(); });
+
+(function(){
+  var HORIZON = 36;   // горизонт расчёта, месяцев
+  var CHART_M = 12;   // сколько месяцев показываем на графике (М0…М12)
+  var LIFT    = 0.10; // одинаковое усилие для всех рычагов: 10% относительно
+
+  /* ---------- форматирование ---------- */
+
+  function money(v){
+    var a = Math.abs(v);
+    var s = a.toLocaleString('ru-RU', {maximumFractionDigits: a < 100 ? (a < 10 ? 2 : 1) : 0});
+    return (v < 0 ? '−$' : '$') + s;
+  }
+  function pct(v, d){ return (v).toLocaleString('ru-RU', {maximumFractionDigits: d === undefined ? 1 : d}) + '%'; }
+  // типографский минус, чтобы отрицательные числа выглядели как в money(), а не с дефисом
+  function dec(v, n){ return (v).toLocaleString('ru-RU', {minimumFractionDigits: n, maximumFractionDigits: n}).replace('-', '−'); }
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+  function plural(n, one, few, many){
+    var a = Math.abs(n) % 100, b = a % 10;
+    if (a > 10 && a < 20) return many;
+    if (b > 1 && b < 5) return few;
+    if (b === 1) return one;
+    return many;
+  }
+  function months(n){ return n + ' ' + plural(n, 'месяц', 'месяца', 'месяцев'); }
+  // дробные месяцы — без склонений, иначе «1,4 месяца» пришлось бы согласовывать отдельно
+  function mon(n){ return Math.abs(n).toLocaleString('ru-RU', {minimumFractionDigits:1, maximumFractionDigits:1}) + ' мес'; }
+
+  /* ---------- чтение и проверка ввода ---------- */
+
+  function val(id){ return parseFloat(document.getElementById(id).value); }
+
+  function read(){
+    var ch = [];
+    for (var i = 1; i <= 3; i++){
+      var share = parseFloat(document.getElementById('ch-share-' + i).value);
+      var cac   = parseFloat(document.getElementById('ch-cac-' + i).value);
+      var name  = document.getElementById('ch-name-' + i).value.trim();
+      if (isNaN(share) || share <= 0) continue;   // канал выключен долей 0
+      ch.push({ name: name || ('Канал ' + i), cac: cac, share: share });
+    }
+    return {
+      r1: val('r1'), r3: val('r3'), r6: val('r6'),
+      arpu: val('arpu'), inf: val('inf'), ig: val('ig'),
+      ch: ch
+    };
+  }
+
+  function validate(d){
+    var nums = [d.r1, d.r3, d.r6, d.arpu, d.inf, d.ig];
+    if (nums.some(function(n){ return isNaN(n); })) return 'Заполни все поля — пока не хватает хотя бы одного числа.';
+    if ([d.r1, d.r3, d.r6].some(function(n){ return n <= 0 || n >= 100; })) return 'Удержание должно быть больше 0 и меньше 100 процентов.';
+    if (d.r1 < d.r3 || d.r3 < d.r6) return 'Удержание не может расти со временем: нужно М1 ≥ М3 ≥ М6. Проверь порядок цифр.';
+    if (!d.ch.length) return 'Нужен хотя бы один канал с долей бюджета больше нуля.';
+    for (var i = 0; i < d.ch.length; i++){
+      if (isNaN(d.ch[i].cac) || d.ch[i].cac <= 0) return 'CAC канала «' + d.ch[i].name + '» должен быть больше нуля: бесплатных пользователей в модели нет.';
+    }
+    if (d.arpu <= 0) return 'Выручка на пользователя должна быть больше нуля.';
+    if (d.inf < 0) return 'Инференс не может быть отрицательным.';
+    if (d.ig <= -100) return 'Инференс не может падать на 100% и больше за квартал.';
+    return null;
+  }
+
+  /* ---------- модель ----------
+     S(t) — доля когорты, активная в месяце t (t = 0 — месяц привлечения, S(0) = 1).
+     Между заданными точками — геометрическая интерполяция, после М6 — тот же
+     помесячный темп, что на участке М3→М6. */
+
+  function survival(t, r1, r3, r6){
+    if (t <= 0) return 1;
+    if (t <= 1) return Math.pow(r1, t);
+    if (t <= 3) return r1 * Math.pow(r3 / r1, (t - 1) / 2);
+    if (t <= 6) return r3 * Math.pow(r6 / r3, (t - 3) / 3);
+    return r6 * Math.pow(Math.pow(r6 / r3, 1 / 3), t - 6);
+  }
+
+  // Блендед CAC = весь бюджет / всех приведённых пользователей.
+  // Это не то же самое, что среднее CAC, взвешенное по бюджету, — и разница тут считается.
+  function blendCac(ch){
+    var total = ch.reduce(function(s, c){ return s + c.share; }, 0);
+    var users = 0, naive = 0;
+    ch.forEach(function(c){
+      var w = c.share / total;      // нормируем доли к единице
+      users += w / c.cac;
+      naive += w * c.cac;
+    });
+    return { blended: 1 / users, naive: naive, total: total };
+  }
+
+  function run(d, o){
+    o = o || {};
+    var rm = o.ret || 1, am = o.arpu || 1, im = o.inf || 1, cm = o.cac || 1;
+
+    var r1 = Math.min(d.r1 * rm, 99) / 100,
+        r3 = Math.min(d.r3 * rm, 99) / 100,
+        r6 = Math.min(d.r6 * rm, 99) / 100;
+
+    var arpu = d.arpu * am,
+        c0   = d.inf * im,
+        gm   = Math.pow(1 + d.ig / 100, 1 / 3),   // помесячный множитель из квартального темпа
+        cac  = blendCac(d.ch).blended * cm;
+
+    var cum = [], acc = 0, payback = null;
+    for (var t = 0; t < HORIZON; t++){
+      var s = survival(t, r1, r3, r6);
+      var c = c0 * Math.pow(gm, t);
+      acc += (arpu - c) * s;
+      cum.push(acc);
+      if (payback === null && acc >= cac) payback = t;
+    }
+
+    // Дробная точка окупаемости: внутри месяца, где накопленный вклад пересекает CAC.
+    // Нужна, чтобы сравнивать рычаги точнее, чем «целый месяц» — иначе три из четырёх слипаются.
+    var exact = null;
+    if (payback !== null){
+      var prev = payback > 0 ? cum[payback - 1] : 0;
+      var step = cum[payback] - prev;
+      exact = step > 0 ? (payback - 1) + (cac - prev) / step : payback;
+      if (exact < 0) exact = 0;
+    }
+
+    return {
+      cum: cum, ltv: acc, cac: cac, ratio: acc / cac, payback: payback, exact: exact,
+      arpu: arpu, c0: c0, gm: gm, r: [r1, r3, r6],
+      tail: Math.pow(r6 / r3, 1 / 3)              // помесячное удержание после М6
+    };
+  }
+
+  /* ---------- рычаги: одинаковое усилие, разный эффект ---------- */
+
+  var LEVERS = [
+    { key:'ret',  title:'Удержание',            move:'вся кривая выше на 10%',      o:{ret: 1 + LIFT},
+      why:'Удержание двигает обе стороны сразу: каждый доживший месяц приносит и выручку, и следующий месяц. Самый медленный рычаг и самый устойчивый.' },
+    { key:'arpu', title:'Цена',                 move:'средний чек +10%',            o:{arpu: 1 + LIFT},
+      why:'Цена бьёт в маржу с первого месяца и не требует ничего чинить в продукте. Риск в другом: часть когорты уйдёт, и здесь этот эффект не учтён.' },
+    { key:'inf',  title:'Стоимость инференса',  move:'−10% на активного',           o:{inf: 1 - LIFT},
+      why:'Единственная статья, которую режут инженерно — без спроса у рынка и без переговоров с пользователем. Обычно недооценена, потому что лежит не в маркетинге.' },
+    { key:'cac',  title:'CAC',                  move:'−10% блендед',                o:{cac: 1 - LIFT},
+      why:'Самый быстрый выигрыш и самый хрупкий: аукцион отыгрывает его обратно, как только вернёшься к прежним объёмам.' }
+  ];
+
+  function pb(m){ return m.exact === null ? HORIZON : m.exact; }
+
+  function levers(d, base){
+    return LEVERS.map(function(l){
+      var m = run(d, l.o);
+      return {
+        title: l.title, move: l.move, why: l.why,
+        gain: pb(base) - pb(m),                    // на сколько месяцев раньше окупается
+        dratio: m.ratio - base.ratio,
+        never: m.payback === null
+      };
+    }).sort(function(a, b){
+      return (b.gain - a.gain) || (b.dratio - a.dratio);
+    });
+  }
+
+  /* ---------- отрисовка ---------- */
+
+  function pageChart(m){
+    var scale = Math.max(m.cac * 1.18, m.cum[CHART_M], 1);
+    var bars = '', xs = '';
+    for (var t = 0; t <= CHART_M; t++){
+      var h = Math.max(0, Math.min(m.cum[t] / scale, 1)) * 100;
+      var on = m.payback !== null && t >= m.payback;
+      bars += '<div class="' + (on ? 'on' : '') + '" style="height:' + h.toFixed(1) + '%"></div>';
+      xs += '<span>' + (t % 2 === 0 ? 'М' + t : '') + '</span>';
+    }
+    var cacTop = (1 - m.cac / scale) * 100;
+    return '<div class="chart-box">' +
+             '<div class="chart" aria-hidden="true">' + bars + '</div>' +
+             '<div class="cacline" style="top:' + cacTop.toFixed(1) + '%"><b>CAC ' + money(m.cac) + '</b></div>' +
+           '</div>' +
+           '<div class="chart-x" aria-hidden="true">' + xs + '</div>';
+  }
+
+  function pageOne(d, m){
+    var text, cls;
+    if (m.ratio < 1)        { text = 'Не сходится';        cls = 'no'; }
+    else if (m.ratio < 1.5) { text = 'Сходится на грани';  cls = 'no'; }
+    else if (m.ratio < 3)   { text = 'Сходится';           cls = 'ok'; }
+    else                    { text = 'Сходится с запасом'; cls = 'ok'; }
+
+    var sub = m.payback === null
+      ? 'За ' + HORIZON + ' месяцев привлечение так и не отбивается.'
+      : 'Привлечение отбивается на М' + m.payback + ' — через ' + months(m.payback) + ' после того, как ты заплатил за пользователя.';
+
+    var m0 = m.arpu - m.c0;
+    var m12 = m.arpu - m.c0 * Math.pow(m.gm, 12);
+
+    return card('audit-deck · стр. 1 из 3', 'Условие сходимости',
+      'Накопленный вклад когорты относительно CAC, первый год',
+      pageChart(m) +
+      '<div class="rows">' +
+        row('Блендед CAC', money(m.cac)) +
+        row('Маржа с активного, М0', money(m0), m0 < 0 ? 'neg' : '') +
+        row('Маржа с активного, М12', money(m12), m12 < 0 ? 'neg' : '') +
+        row('LTV за ' + HORIZON + ' мес, с вычетом инференса', money(m.ltv)) +
+        row('LTV к CAC', dec(m.ratio, 2) + '×', m.ratio >= 1.5 ? 'pos' : 'neg') +
+        row('Месяц окупаемости', m.payback === null ? 'не наступает' : 'М' + m.payback, m.payback === null ? 'neg' : '') +
+      '</div>' +
+      '<div class="verdict"><div class="v-text ' + cls + '">' + text + '</div>' +
+      '<div class="v-sub">' + sub + '</div></div>'
+    );
+  }
+
+  function pageTwo(d, m){
+    var b = blendCac(d.ch);
+    var diff = (b.naive / b.blended - 1) * 100;
+    var monthlyTail = (1 - m.tail) * 100;
+    var c12 = m.c0 * Math.pow(m.gm, 12), c36 = m.c0 * Math.pow(m.gm, 35);
+    var chList = d.ch.map(function(c){
+      return esc(c.name) + ' — ' + money(c.cac) + ' при ' + pct(c.share / b.total * 100, 0) + ' бюджета';
+    }).join(' · ');
+
+    var items = [
+      ['Кривая удержания задана тремя точками',
+       'М1 <em>' + pct(d.r1, 0) + '</em>, М3 <em>' + pct(d.r3, 0) + '</em>, М6 <em>' + pct(d.r6, 0) + '</em>. Между ними — геометрическая интерполяция, промежуточных месяцев в данных нет.'],
+      ['После М6 удержание падает тем же темпом, что между М3 и М6',
+       'Это <em>−' + pct(monthlyTail) + '</em> в месяц, дальше без выполаживания. В реальности хвост кривой почти всегда плоский — значит, LTV здесь скорее занижен.'],
+      ['Горизонт — ' + HORIZON + ' месяцев',
+       'Всё, что пользователь принесёт после М' + (HORIZON - 1) + ', в расчёт не попало.'],
+      ['Блендед CAC считается как бюджет, делённый на пользователей',
+       '<em>' + money(b.blended) + '</em> по каналам: ' + chList + '. Среднее CAC, взвешенное по бюджету, дало бы <em>' + money(b.naive) + '</em> — на ' + pct(Math.abs(diff)) + ' ' + (diff > 0 ? 'больше' : 'меньше') + '. Дешёвый канал приводит больше людей на тот же доллар, и взвешивание по бюджету это теряет.'],
+      ['Выручка на активного не растёт',
+       '<em>' + money(d.arpu) + '</em> в месяц на всём горизонте: апсейлов, смены тарифа, возвратов и реферального эффекта в модели нет.'],
+      ['Инференс меняется ровным темпом',
+       '<em>' + money(m.c0) + '</em> сейчас, <em>' + pct(d.ig) + '</em> за квартал → <em>' + money(c12) + '</em> к М12 и <em>' + money(c36) + '</em> к М' + (HORIZON - 1) + '. Ступенек от смены модели или роста нагрузки нет.'],
+      ['Из выручки вычитается только инференс',
+       'Комиссии сторов и платёжных систем, поддержка, хостинг и всё остальное — за скобками. Реальная маржа ниже этой.'],
+      ['Все пользователи одинаковые',
+       'Один тариф, одна интенсивность использования, одна кривая на всех. Сегментов и разных когорт по каналам здесь нет — а в аудите они и оказываются главным.']
+    ];
+
+    var html = '<div class="asm">' + items.map(function(it){
+      return '<div class="asm-row"><b>' + it[0] + '</b><span>' + it[1] + '</span></div>';
+    }).join('') + '</div>';
+
+    return card('audit-deck · стр. 2 из 3', 'Допущения',
+      'Восемь строк, с которыми можно спорить по отдельности',
+      html +
+      '<div class="page-foot"><b>Зачем это здесь.</b> Спорить с выводом целиком бессмысленно — ' +
+      'спорить можно с конкретной строкой. Если хоть одна из восьми на твоих данных неверна, ' +
+      'меняется страница 1, а не тон разговора.</div>'
+    );
+  }
+
+  function pageThree(d, m, ls){
+    var top = ls[0], last = ls[ls.length - 1];
+
+    // Если окупаемости нет вовсе, месяцы сравнивать нечем — все рычаги дали бы «ноль».
+    // Тогда переключаемся на LTV к CAC: порядок рычагов от этого не меняется, меняется мерило.
+    var byPayback = m.payback !== null;
+    var metric = function(l){ return byPayback ? l.gain : l.dratio; };
+    // Полоска меряет только пользу: рычаг, который делает хуже, не должен выглядеть длинным.
+    var maxPos = Math.max.apply(null, ls.map(function(l){ return Math.max(metric(l), 0); })) || 1;
+
+    var html = '<div class="lev">' + ls.map(function(l, i){
+      var d1;
+      if (byPayback){
+        if (l.gain >= 0.05) d1 = '<span class="lev-d">−' + mon(l.gain) + ' к окупаемости</span>';
+        else if (l.gain <= -0.05) d1 = '<span class="lev-d">+' + mon(l.gain) + ' к окупаемости</span>';
+        else d1 = '<span class="lev-d zero">окупаемость не двигается</span>';
+      } else {
+        d1 = Math.abs(l.dratio) >= 0.005
+          ? '<span class="lev-d">' + (l.dratio > 0 ? '+' : '−') + dec(Math.abs(l.dratio), 2) + '× к LTV/CAC</span>'
+          : '<span class="lev-d zero">не двигает ничего</span>';
+      }
+
+      var w = Math.max(Math.max(metric(l), 0) / maxPos * 100, 2);
+      var tail = byPayback
+        ? ' LTV к CAC: ' + (l.dratio >= 0 ? '+' : '−') + dec(Math.abs(l.dratio), 2) + '×.'
+        : ' Окупаемость всё равно не наступает за ' + HORIZON + ' месяцев.';
+
+      return '<div class="lev-row' + (i === ls.length - 1 ? ' last' : '') + '">' +
+               '<div class="lev-n">0' + (i + 1) + '</div>' +
+               '<div class="lev-t">' + l.title + ' <span style="font-weight:400;color:var(--ink-3);font-size:15px">· ' + l.move + '</span></div>' +
+               d1 +
+               '<div class="lev-bar"><i style="width:' + w.toFixed(0) + '%"></i></div>' +
+               '<div class="lev-s">' + l.why + tail + '</div>' +
+             '</div>';
+    }).join('') + '</div>';
+
+    var verdict, skip;
+    if (byPayback && top.gain >= 0.05){
+      verdict = 'Первым — ' + top.title.toLowerCase() + ': при одинаковом усилии в 10% этот рычаг приближает окупаемость на ' + mon(top.gain) + ', сильнее остальных трёх.';
+      skip = last.gain < 0.05
+        ? last.title + ' сейчас не рычаг вообще: те же 10% усилия не дают ничего.'
+        : last.title + ' трогать последним: те же 10% дают всего ' + mon(last.gain) + ' — в ' + dec(top.gain / last.gain, 1) + ' раза меньше верхнего.';
+    } else if (!byPayback){
+      verdict = 'Ни один рычаг на 10% не выводит модель в окупаемость. Сравнивать приходится по LTV к CAC — и там впереди ' + top.title.toLowerCase() + '.';
+      skip = 'Это главный вывод страницы: чинить нужно не на 10%, а в разы. Порядок рычагов подскажет, с какой стороны заходить, но подкруткой здесь не обойтись.';
+    } else {
+      verdict = 'Ни один из четырёх рычагов при усилии в 10% окупаемость заметно не двигает.';
+      skip = 'Значит, дело не в настройке: модели нужен другой порядок величин, а не подкрутка.';
+    }
+
+    return card('audit-deck · стр. 3 из 3', 'Что сдвинуть первым',
+      'Все четыре рычага сдвинуты на одинаковые 10% — сравнивается эффект, а не усилие',
+      html +
+      '<div class="verdict long"><div class="v-text">' + verdict + '</div>' +
+      '<div class="v-sub">' + skip + ' Порядок пересчитывается на твоих числах: поменяй ввод — поменяется и он.</div></div>'
+    );
+  }
+
+  function card(bar, title, sub, body){
+    return '<article class="page">' +
+             '<div class="page-bar"><i></i><i></i><i></i><small>' + bar + '</small></div>' +
+             '<div class="page-body">' +
+               '<div class="page-title">' + title + '</div>' +
+               '<div class="page-sub">' + sub + '</div>' +
+               body +
+             '</div>' +
+           '</article>';
+  }
+
+  function row(label, value, cls){
+    return '<div class="row"><span>' + label + '</span><b' + (cls ? ' class="' + cls + '"' : '') + '>' + value + '</b></div>';
+  }
+
+  /* ---------- состояние в адресе страницы ---------- */
+
+  function toHash(d){
+    var p = ['r1=' + d.r1, 'r3=' + d.r3, 'r6=' + d.r6,
+             'arpu=' + d.arpu, 'inf=' + d.inf, 'ig=' + d.ig];
+    p.push('ch=' + d.ch.map(function(c){
+      return encodeURIComponent(c.name) + ':' + c.cac + ':' + c.share;
+    }).join(','));
+    return '#' + p.join('&');
+  }
+
+  function fromHash(){
+    var h = location.hash.replace(/^#/, '');
+    if (!h) return false;
+    var q = {};
+    h.split('&').forEach(function(pair){
+      var i = pair.indexOf('=');
+      if (i > 0) q[pair.slice(0, i)] = pair.slice(i + 1);
+    });
+    var simple = ['r1','r3','r6','arpu','inf','ig'], ok = false;
+    simple.forEach(function(k){
+      if (q[k] !== undefined && !isNaN(parseFloat(q[k]))){
+        document.getElementById(k).value = parseFloat(q[k]);
+        ok = true;
+      }
+    });
+    if (q.ch){
+      var list = q.ch.split(',');
+      for (var i = 1; i <= 3; i++){
+        var parts = (list[i - 1] || '').split(':');
+        if (parts.length === 3 && !isNaN(parseFloat(parts[1]))){
+          document.getElementById('ch-name-' + i).value  = decodeURIComponent(parts[0]);
+          document.getElementById('ch-cac-' + i).value   = parseFloat(parts[1]);
+          document.getElementById('ch-share-' + i).value = parseFloat(parts[2]);
+        } else {
+          document.getElementById('ch-share-' + i).value = 0;
+        }
+      }
+      ok = true;
+    }
+    return ok;
+  }
+
+  function copy(text){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(text).then(function(){ return true; }, fallback);
+    }
+    return Promise.resolve(fallback());
+
+    function fallback(){
+      // file:// и http без TLS не дают clipboard API — уходим на старый способ
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:absolute;left:-9999px;top:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      var done = false;
+      try { done = document.execCommand('copy'); } catch(e){ done = false; }
+      document.body.removeChild(ta);
+      return done;
+    }
+  }
+
+  /* ---------- связывание ---------- */
+
+  var els = {
+    form: document.getElementById('form'),
+    err: document.getElementById('err'),
+    out: document.getElementById('out'),
+    pages: document.getElementById('pages'),
+    sum: document.getElementById('share-sum'),
+    copied: document.getElementById('copied')
+  };
+  var built = false;
+
+  function shareSum(){
+    var s = 0;
+    for (var i = 1; i <= 3; i++){
+      var v = parseFloat(document.getElementById('ch-share-' + i).value);
+      if (!isNaN(v) && v > 0) s += v;
+    }
+    var off = Math.abs(s - 100) > 0.5;
+    els.sum.className = 'share-sum' + (off ? ' warn' : '');
+    els.sum.innerHTML = 'Сумма долей: <b>' + pct(s, 0) + '</b>' +
+      (off ? ' — доли нормируются к 100%, пропорции сохранятся' : '');
+    return s;
+  }
+
+  function render(scroll){
+    var d = read();
+    var problem = validate(d);
+    if (problem){
+      els.err.hidden = false;
+      els.err.textContent = problem;
+      return false;
+    }
+    els.err.hidden = true;
+
+    var base = run(d);
+    var ls = levers(d, base);
+
+    els.pages.innerHTML = pageOne(d, base) + pageTwo(d, base) + pageThree(d, base, ls);
+    els.out.hidden = false;
+    built = true;
+
+    try { history.replaceState(null, '', toHash(d)); }
+    catch(e){ location.hash = toHash(d).slice(1); }
+
+    if (scroll) els.out.scrollIntoView({behavior:'smooth', block:'start'});
+    return true;
+  }
+
+  els.form.addEventListener('submit', function(e){
+    e.preventDefault();
+    render(true);
+  });
+
+  // После первой сборки дек живёт вместе с полями — правки видно сразу.
+  els.form.addEventListener('input', function(e){
+    shareSum();
+    if (built) render(false);
+    els.copied.hidden = true;
+  });
+
+  document.getElementById('print').addEventListener('click', function(){
+    if (!built && !render(false)) return;
+    window.print();
+  });
+
+  document.getElementById('copylink').addEventListener('click', function(){
+    if (!built && !render(false)) return;
+    var url = location.href.split('#')[0] + toHash(read());
+    Promise.resolve(copy(url)).then(function(ok){
+      els.copied.hidden = false;
+      els.copied.textContent = ok === false ? 'Не вышло скопировать — ссылка в адресной строке' : 'Ссылка скопирована';
+    });
+  });
+
+  shareSum();
+  if (fromHash()) render(false);   // пришли по ссылке с расчётом — сразу показываем дек
+})();
+</script>
+
+</body>
+</html>
