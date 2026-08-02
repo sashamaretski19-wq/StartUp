@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>Мини-дек по твоим цифрам · Growth &amp; Unit-Economics Audit</title>
-<meta name="description" content="Введи удержание когорты, CAC по каналам, чек и стоимость инференса — получи три страницы мини-дека: условие сходимости, список допущений и порядок рычагов. Всё считается в браузере.">
+<meta name="description" content="Введи удержание когорты, CAC по каналам, чек и стоимость инференса — получи три страницы мини-дека: условие сходимости, список допущений и требуемые движения по каждому рычагу. Всё считается в браузере.">
 <meta name="robots" content="index,follow">
 <link rel="alternate" hreflang="ru" href="demo.html">
 <link rel="alternate" hreflang="en" href="demo-en.html">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:title" content="Мини-дек по твоим цифрам">
-<meta property="og:description" content="Три страницы расчёта из твоих чисел: где сходится, на каких допущениях и что двигать первым.">
+<meta property="og:description" content="Три страницы расчёта из твоих чисел: где сходится, на каких допущениях и что нужно сдвинуть.">
 <meta property="og:image" content="images/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <script>
@@ -197,6 +197,21 @@
 
   /* ---------- форма ---------- */
   .builder{max-width:920px;margin:56px auto 0;}
+
+  /* готовые профили: чтобы не искать свои когорты, а сразу увидеть, что расчёт живой */
+  .presets{margin-bottom:44px;padding-bottom:38px;border-bottom:1px solid var(--hair);}
+  .presets > b{display:block;font-size:15.5px;font-weight:600;margin-bottom:6px;}
+  .presets > span{display:block;font-size:15.5px;color:var(--ink-3);line-height:1.55;margin-bottom:20px;}
+  .preset-row{display:flex;flex-wrap:wrap;gap:10px;}
+  .preset{
+    flex:1 1 220px;text-align:left;
+    padding:14px 18px;border:1px solid var(--line);border-radius:12px;
+    background:transparent;color:var(--ink);cursor:pointer;font-family:inherit;
+    transition:border-color .16s ease,transform .16s ease;
+  }
+  .preset:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .preset b{display:block;font-size:16px;font-weight:600;letter-spacing:-.012em;}
+  .preset span{display:block;margin-top:4px;font-size:14px;color:var(--ink-3);line-height:1.45;}
   .group + .group{margin-top:44px;padding-top:38px;border-top:1px solid var(--hair);}
   .group > h3{margin-bottom:6px;}
   .group > .hint{font-size:15.5px;color:var(--ink-3);margin-bottom:28px;line-height:1.55;}
@@ -308,21 +323,18 @@
   /* страница рычагов */
   .lev{border-top:1px solid var(--hair);}
   .lev-row{
-    display:grid;gap:6px 20px;grid-template-columns:34px 1fr auto;align-items:baseline;
+    display:grid;gap:6px 20px;grid-template-columns:1fr auto;align-items:baseline;
     padding:20px 0;border-bottom:1px solid var(--hair);
   }
-  .lev-n{
-    grid-row:span 2;
-    font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--accent);
-    align-self:start;padding-top:4px;
-  }
   .lev-t{font-size:18.5px;font-weight:600;letter-spacing:-.014em;}
-  .lev-d{font-size:16.5px;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;}
-  .lev-d.zero{color:var(--ink-3);font-weight:500;}
-  .lev-s{grid-column:2 / 4;font-size:15px;color:var(--ink-2);line-height:1.55;}
-  .lev-bar{grid-column:2 / 4;height:5px;border-radius:3px;background:var(--chart-idle);overflow:hidden;margin-top:4px;}
-  .lev-bar i{display:block;height:100%;background:var(--accent);border-radius:3px;}
-  .lev-row.last .lev-t,.lev-row.last .lev-d{color:var(--ink-3);}
+  .lev-d{
+    font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;
+    text-align:right;white-space:nowrap;letter-spacing:-.02em;color:var(--accent);
+  }
+  .lev-d.zero{font-size:16px;color:var(--ink-3);font-weight:500;letter-spacing:0;}
+  .lev-s{grid-column:1 / 3;font-size:15px;color:var(--ink-2);line-height:1.55;}
+  /* рычаг, которого в одиночку не хватает, гасим — но не прячем */
+  .lev-row.off .lev-t{color:var(--ink-3);}
 
   .page-foot{
     margin-top:24px;padding:15px 17px;border-radius:10px;
@@ -364,9 +376,9 @@
     .page-body{padding:24px 20px;}
     .chart{height:140px;gap:4px;}
     .chart-x{gap:4px;font-size:10px;}
-    .lev-row{grid-template-columns:26px 1fr;}
-    .lev-d{grid-column:2;text-align:left;}
-    .lev-s,.lev-bar{grid-column:2;}
+    .lev-row{grid-template-columns:1fr;}
+    .lev-d{text-align:left;}
+    .lev-s{grid-column:1;}
     .cta .links{flex-direction:column;}
     .cta p{font-size:18px;}
   }
@@ -426,6 +438,16 @@
   <div class="wrap">
 
     <form class="builder" id="form" novalidate>
+
+      <div class="presets">
+        <b>Своих цифр под рукой нет?</b>
+        <span>
+          Возьми готовый профиль — форма заполнится, дек соберётся сразу. Это выдуманные
+          архетипы, не настоящие компании: они нужны, чтобы увидеть, как меняется вывод,
+          когда меняются вводные.
+        </span>
+        <div class="preset-row" id="preset-row"></div>
+      </div>
 
       <div class="group">
         <h3>Кривая удержания</h3>
@@ -581,7 +603,7 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
 (function(){
   var HORIZON = 36;   // горизонт расчёта, месяцев
   var CHART_M = 12;   // сколько месяцев показываем на графике (М0…М12)
-  var LIFT    = 0.10; // одинаковое усилие для всех рычагов: 10% относительно
+  var TARGET  = 3;    // ориентир, к которому считаем требуемые движения: LTV к CAC = 3×
 
   /* ---------- форматирование ---------- */
 
@@ -606,8 +628,6 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
     return many;
   }
   function months(n){ return n + ' ' + plural(n, 'месяц', 'месяца', 'месяцев'); }
-  // дробные месяцы — без склонений, иначе «1,4 месяца» пришлось бы согласовывать отдельно
-  function mon(n){ return Math.abs(n).toLocaleString('ru-RU', {minimumFractionDigits:1, maximumFractionDigits:1}) + ' мес'; }
 
   /* ---------- чтение и проверка ввода ---------- */
 
@@ -672,7 +692,11 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
 
   function run(d, o){
     o = o || {};
-    var rm = o.ret || 1, am = o.arpu || 1, im = o.inf || 1, cm = o.cac || 1;
+    // Через || здесь нельзя: ноль — допустимый множитель (инференс в ноль), а он ложный.
+    var rm = o.ret  === undefined ? 1 : o.ret,
+        am = o.arpu === undefined ? 1 : o.arpu,
+        im = o.inf  === undefined ? 1 : o.inf,
+        cm = o.cac  === undefined ? 1 : o.cac;
 
     var r1 = Math.min(d.r1 * rm, 99) / 100,
         r3 = Math.min(d.r3 * rm, 99) / 100,
@@ -709,32 +733,55 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
     };
   }
 
-  /* ---------- рычаги: одинаковое усилие, разный эффект ---------- */
+  /* ---------- рычаги: сколько нужно от каждого ----------
+     Порядок фиксированный и рычаги НЕ ранжируются. Причина: сравнивать «+27% к цене»
+     с «−24% к CAC» по величине процента бессмысленно — это разные по трудности движения.
+     Раньше здесь стояло «сдвинем каждый на 10% и посмотрим, кто сильнее», и перебор
+     показал, что такая постановка вырождается: цена выигрывает в двух третях случаев
+     просто потому, что поднимает и нулевой месяц, а удержание не выигрывает никогда. */
 
   var LEVERS = [
-    { key:'ret',  title:'Удержание',            move:'вся кривая выше на 10%',      o:{ret: 1 + LIFT},
-      why:'Удержание двигает обе стороны сразу: каждый доживший месяц приносит и выручку, и следующий месяц. Самый медленный рычаг и самый устойчивый.' },
-    { key:'arpu', title:'Цена',                 move:'средний чек +10%',            o:{arpu: 1 + LIFT},
-      why:'Цена бьёт в маржу с первого месяца и не требует ничего чинить в продукте. Риск в другом: часть когорты уйдёт, и здесь этот эффект не учтён.' },
-    { key:'inf',  title:'Стоимость инференса',  move:'−10% на активного',           o:{inf: 1 - LIFT},
+    { key:'ret',  title:'Удержание',           unit:'вся кривая',           dir: 1,
+      why:'Двигает всё, что после нулевого месяца: каждый доживший месяц приносит и выручку, и следующий месяц. Самый медленный рычаг и самый устойчивый.' },
+    { key:'arpu', title:'Цена',                unit:'средний чек',          dir: 1,
+      why:'Бьёт в маржу с первого месяца и не требует ничего чинить в продукте. Поэтому в модели он выглядит дешевле, чем на самом деле: отток от подорожания здесь не учтён.' },
+    { key:'inf',  title:'Стоимость инференса', unit:'на активного',         dir:-1,
       why:'Единственная статья, которую режут инженерно — без спроса у рынка и без переговоров с пользователем. Обычно недооценена, потому что лежит не в маркетинге.' },
-    { key:'cac',  title:'CAC',                  move:'−10% блендед',                o:{cac: 1 - LIFT},
-      why:'Самый быстрый выигрыш и самый хрупкий: аукцион отыгрывает его обратно, как только вернёшься к прежним объёмам.' }
+    { key:'cac',  title:'CAC',                 unit:'блендед',              dir:-1,
+      why:'Самый быстрый рычаг и самый хрупкий: аукцион отыгрывает снижение обратно, как только вернёшься к прежним объёмам.' }
   ];
 
-  function pb(m){ return m.exact === null ? HORIZON : m.exact; }
+  // Пределы, за которые рычаг физически не уходит: удержание упирается в 99%,
+  // инференс — в ноль, CAC — в почти бесплатное привлечение, цена — в шестикратную.
+  function bounds(d, key){
+    if (key === 'ret')  return [1, 99 / Math.max(d.r1, 1)];
+    if (key === 'arpu') return [1, 6];
+    if (key === 'inf')  return [1, 0];
+    return [1, 0.02];
+  }
 
-  function levers(d, base){
+  // Сколько нужно подвинуть один рычаг, чтобы LTV к CAC вышел на TARGET.
+  // Возвращает множитель или null, если в одиночку рычаг до цели не доводит.
+  function required(d, key){
+    var b = bounds(d, key);
+    var at = function(k){ var o = {}; o[key] = k; return run(d, o).ratio; };
+    if (!(at(b[1]) >= TARGET)) return null;
+    var lo = b[0], hi = b[1];
+    for (var i = 0; i < 48; i++){
+      var mid = (lo + hi) / 2;
+      if (at(mid) >= TARGET) hi = mid; else lo = mid;
+    }
+    return hi;
+  }
+
+  function requirements(d){
     return LEVERS.map(function(l){
-      var m = run(d, l.o);
+      var k = required(d, l.key);
       return {
-        title: l.title, move: l.move, why: l.why,
-        gain: pb(base) - pb(m),                    // на сколько месяцев раньше окупается
-        dratio: m.ratio - base.ratio,
-        never: m.payback === null
+        title: l.title, unit: l.unit, why: l.why, dir: l.dir,
+        k: k,                                  // требуемый множитель или null
+        move: k === null ? null : (k - 1) * 100 // на сколько процентов двигать
       };
-    }).sort(function(a, b){
-      return (b.gain - a.gain) || (b.dratio - a.dratio);
     });
   }
 
@@ -828,62 +875,63 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
     );
   }
 
-  function pageThree(d, m, ls){
-    var top = ls[0], last = ls[ls.length - 1];
+  function pageThree(d, m, rq){
+    var reach = rq.filter(function(l){ return l.k !== null; });
 
-    // Если окупаемости нет вовсе, месяцы сравнивать нечем — все рычаги дали бы «ноль».
-    // Тогда переключаемся на LTV к CAC: порядок рычагов от этого не меняется, меняется мерило.
-    var byPayback = m.payback !== null;
-    var metric = function(l){ return byPayback ? l.gain : l.dratio; };
-    // Полоска меряет только пользу: рычаг, который делает хуже, не должен выглядеть длинным.
-    var maxPos = Math.max.apply(null, ls.map(function(l){ return Math.max(metric(l), 0); })) || 1;
+    var html = '<div class="lev">' + rq.map(function(l){
+      var value = l.k === null
+        ? '<span class="lev-d zero">в одиночку не хватит</span>'
+        : '<span class="lev-d">' + (l.move >= 0 ? '+' : '−') + dec(Math.abs(l.move), 0) + '%</span>';
 
-    var html = '<div class="lev">' + ls.map(function(l, i){
-      var d1;
-      if (byPayback){
-        if (l.gain >= 0.05) d1 = '<span class="lev-d">−' + mon(l.gain) + ' к окупаемости</span>';
-        else if (l.gain <= -0.05) d1 = '<span class="lev-d">+' + mon(l.gain) + ' к окупаемости</span>';
-        else d1 = '<span class="lev-d zero">окупаемость не двигается</span>';
-      } else {
-        d1 = Math.abs(l.dratio) >= 0.005
-          ? '<span class="lev-d">' + (l.dratio > 0 ? '+' : '−') + dec(Math.abs(l.dratio), 2) + '× к LTV/CAC</span>'
-          : '<span class="lev-d zero">не двигает ничего</span>';
-      }
+      var tail = l.k === null
+        ? ' Даже на пределе — ' + limitText(l) + ' — одного этого рычага до ' + TARGET + '× не хватает.'
+        : '';
 
-      var w = Math.max(Math.max(metric(l), 0) / maxPos * 100, 2);
-      var tail = byPayback
-        ? ' LTV к CAC: ' + (l.dratio >= 0 ? '+' : '−') + dec(Math.abs(l.dratio), 2) + '×.'
-        : ' Окупаемость всё равно не наступает за ' + HORIZON + ' месяцев.';
-
-      return '<div class="lev-row' + (i === ls.length - 1 ? ' last' : '') + '">' +
-               '<div class="lev-n">0' + (i + 1) + '</div>' +
-               '<div class="lev-t">' + l.title + ' <span style="font-weight:400;color:var(--ink-3);font-size:15px">· ' + l.move + '</span></div>' +
-               d1 +
-               '<div class="lev-bar"><i style="width:' + w.toFixed(0) + '%"></i></div>' +
+      return '<div class="lev-row' + (l.k === null ? ' off' : '') + '">' +
+               '<div class="lev-t">' + l.title +
+                 ' <span style="font-weight:400;color:var(--ink-3);font-size:15px">· ' + l.unit + '</span></div>' +
+               value +
                '<div class="lev-s">' + l.why + tail + '</div>' +
              '</div>';
     }).join('') + '</div>';
 
-    var verdict, skip;
-    if (byPayback && top.gain >= 0.05){
-      verdict = 'Первым — ' + top.title.toLowerCase() + ': при одинаковом усилии в 10% этот рычаг приближает окупаемость на ' + mon(top.gain) + ', сильнее остальных трёх.';
-      skip = last.gain < 0.05
-        ? last.title + ' сейчас не рычаг вообще: те же 10% усилия не дают ничего.'
-        : last.title + ' трогать последним: те же 10% дают всего ' + mon(last.gain) + ' — в ' + dec(top.gain / last.gain, 1) + ' раза меньше верхнего.';
-    } else if (!byPayback){
-      verdict = 'Ни один рычаг на 10% не выводит модель в окупаемость. Сравнивать приходится по LTV к CAC — и там впереди ' + top.title.toLowerCase() + '.';
-      skip = 'Это главный вывод страницы: чинить нужно не на 10%, а в разы. Порядок рычагов подскажет, с какой стороны заходить, но подкруткой здесь не обойтись.';
+    var verdict, sub;
+    if (!reach.length){
+      verdict = 'До ' + TARGET + '× не доводит ни один рычаг в одиночку — даже выкрученный до предела.';
+      sub = 'Это и есть главный вывод: модель чинится только комбинацией, и начинать надо с разговора о том, какие два движения ты реально можешь сделать одновременно.';
+    } else if (reach.length === 1){
+      verdict = 'В одиночку до ' + TARGET + '× доводит только один рычаг: ' + lower(reach[0].title) + ', ' + signed(reach[0].move) + '.';
+      sub = 'Остальные три упираются в свой предел раньше, чем в цель. Это не значит, что их не трогать — это значит, что поодиночке они её не закрывают.';
     } else {
-      verdict = 'Ни один из четырёх рычагов при усилии в 10% окупаемость заметно не двигает.';
-      skip = 'Значит, дело не в настройке: модели нужен другой порядок величин, а не подкрутка.';
+      verdict = 'До ' + TARGET + '× доводят ' + word(reach.length) + ' рычага из четырёх: ' +
+        reach.map(function(l){ return lower(l.title) + ' ' + signed(l.move); }).join(', ') + '.';
+      sub = 'Какой из них твой — вопрос не расчёта, а того, что твоя команда способна сделать за квартал.';
     }
 
-    return card('audit-deck · стр. 3 из 3', 'Что сдвинуть первым',
-      'Все четыре рычага сдвинуты на одинаковые 10% — сравнивается эффект, а не усилие',
+    return card('audit-deck · стр. 3 из 3', 'Что нужно сдвинуть',
+      'Насколько подвинуть каждый рычаг по отдельности, чтобы LTV к CAC вышел на ' + TARGET + '×',
       html +
       '<div class="verdict long"><div class="v-text">' + verdict + '</div>' +
-      '<div class="v-sub">' + skip + ' Порядок пересчитывается на твоих числах: поменяй ввод — поменяется и он.</div></div>'
+      '<div class="v-sub">' + sub + '</div></div>' +
+      '<div class="page-foot"><b>Почему здесь нет «первого» и «последнего».</b> ' +
+      'Проценты разных рычагов несопоставимы: поднять цену на 27% и срезать CAC на 24% — ' +
+      'это совершенно разная работа и разный риск. Любой рейтинг здесь был бы подгонкой ' +
+      'под ответ, поэтому страница показывает требуемые величины, а очередь расставляют ' +
+      'на разборе — под то, что команда может сделать на самом деле.</div>'
     );
+  }
+
+  function signed(v){ return (v >= 0 ? '+' : '−') + dec(Math.abs(v), 0) + '%'; }
+
+  // Названия рычагов в середине фразы пишем со строчной, но аббревиатуры не трогаем.
+  function lower(s){ return s === s.toUpperCase() ? s : s.charAt(0).toLowerCase() + s.slice(1); }
+  function word(n){ return ['ноль','один','два','три','четыре'][n] || String(n); }
+
+  function limitText(l){
+    if (l.title === 'Удержание') return 'вся кривая у 99%';
+    if (l.title === 'Цена') return 'чек в шесть раз выше';
+    if (l.title === 'CAC') return 'привлечение почти бесплатное';
+    return 'инференс в ноль';
   }
 
   function card(bar, title, sub, body){
@@ -965,6 +1013,54 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
     }
   }
 
+  /* ---------- готовые профили ----------
+     Числа подобраны так, чтобы у трёх архетипов отличалось главное: какие рычаги
+     вообще дотягивают до цели в одиночку. У компаньона это удержание, цена и CAC;
+     у freemium дешевле всего чинится инференс; у B2B удержание уже упёрлось в потолок. */
+
+  var PRESETS = [
+    { name: 'AI-компаньон по подписке',
+      note: 'Ровная подписка, удержание держится, инференс скромный',
+      d: { r1:64, r3:44, r6:33, arpu:19, inf:4.2, ig:-10,
+           ch:[['Performance',58,60], ['Инфлюенсеры',82,25], ['Контент',19,15]] } },
+    { name: 'Freemium-редактор',
+      note: 'Дешёвое привлечение, низкий чек, инференс съедает выручку и дорожает',
+      d: { r1:58, r3:38, r6:28, arpu:11, inf:6.4, ig:14,
+           ch:[['Paid social',9,70], ['Органика',3,30]] } },
+    { name: 'B2B-ассистент',
+      note: 'Липкий продукт и высокий чек, но привлечение стоит сотни долларов',
+      d: { r1:91, r3:84, r6:78, arpu:44, inf:8, ig:-6,
+           ch:[['Outbound',520,75], ['Партнёрства',240,25]] } }
+  ];
+
+  function applyPreset(p){
+    ['r1','r3','r6','arpu','inf','ig'].forEach(function(k){
+      document.getElementById(k).value = p.d[k];
+    });
+    for (var i = 1; i <= 3; i++){
+      var c = p.d.ch[i - 1];
+      document.getElementById('ch-name-' + i).value  = c ? c[0] : '';
+      document.getElementById('ch-cac-' + i).value   = c ? c[1] : '';
+      document.getElementById('ch-share-' + i).value = c ? c[2] : 0;
+    }
+  }
+
+  function renderPresets(){
+    var row = document.getElementById('preset-row');
+    PRESETS.forEach(function(p){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'preset';
+      b.innerHTML = '<b>' + esc(p.name) + '</b><span>' + esc(p.note) + '</span>';
+      b.addEventListener('click', function(){
+        applyPreset(p);
+        shareSum();
+        render(true);
+      });
+      row.appendChild(b);
+    });
+  }
+
   /* ---------- связывание ---------- */
 
   var els = {
@@ -1001,9 +1097,9 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
     els.err.hidden = true;
 
     var base = run(d);
-    var ls = levers(d, base);
+    var rq = requirements(d);
 
-    els.pages.innerHTML = pageOne(d, base) + pageTwo(d, base) + pageThree(d, base, ls);
+    els.pages.innerHTML = pageOne(d, base) + pageTwo(d, base) + pageThree(d, base, rq);
     els.out.hidden = false;
     built = true;
 
@@ -1040,6 +1136,7 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
     });
   });
 
+  renderPresets();
   shareSum();
   if (fromHash()) render(false);   // пришли по ссылке с расчётом — сразу показываем дек
 })();
