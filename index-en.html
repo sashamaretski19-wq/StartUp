@@ -200,6 +200,15 @@
     flex:0 0 auto;width:62px;height:62px;
     border-radius:50%;object-fit:cover;object-position:50% 22%;
   }
+  /* name and photo link through to the personal page */
+  .byline .avatar-link{flex:0 0 auto;display:block;border-radius:50%;transition:transform .16s ease;}
+  .byline .avatar-link:hover{transform:translateY(-2px);}
+  .byline b a{
+    text-decoration:none;color:inherit;
+    border-bottom:1px solid var(--line);
+    transition:border-color .16s ease,color .16s ease;
+  }
+  .byline b a:hover{color:var(--accent);border-bottom-color:var(--accent);}
 
   .btn{
     display:inline-flex;align-items:center;gap:10px;
@@ -407,8 +416,10 @@
       with variable inference cost inside the model, not sitting next to it.
     </p>
     <div class="byline">
-      <img class="avatar" src="images/photo.png" alt="Sasha Marecki" width="62" height="62">
-      <span><b>Sasha Marecki — CMO, e-commerce marketing</b>A 10M+ USD budget I spend myself, every day.</span>
+      <a class="avatar-link" href="https://sashamaretski19-wq.github.io/index-en.html" aria-label="Sasha Marecki's personal page">
+        <img class="avatar" src="images/photo.png" alt="Sasha Marecki" width="62" height="62">
+      </a>
+      <span><b><a href="https://sashamaretski19-wq.github.io/index-en.html">Sasha Marecki — CMO, e-commerce marketing</a></b>A 10M+ USD budget I spend myself, every day.</span>
     </div>
     <div class="hero-cta">
       <a class="btn" href="#next">Write to me →</a>

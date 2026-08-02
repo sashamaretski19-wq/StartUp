@@ -200,6 +200,15 @@
     flex:0 0 auto;width:62px;height:62px;
     border-radius:50%;object-fit:cover;object-position:50% 22%;
   }
+  /* имя и фото ведут на персональную страницу */
+  .byline .avatar-link{flex:0 0 auto;display:block;border-radius:50%;transition:transform .16s ease;}
+  .byline .avatar-link:hover{transform:translateY(-2px);}
+  .byline b a{
+    text-decoration:none;color:inherit;
+    border-bottom:1px solid var(--line);
+    transition:border-color .16s ease,color .16s ease;
+  }
+  .byline b a:hover{color:var(--accent);border-bottom-color:var(--accent);}
 
   .btn{
     display:inline-flex;align-items:center;gap:10px;
@@ -407,8 +416,10 @@
       для consumer AI — с переменной стоимостью инференса внутри модели, а не рядом с ней.
     </p>
     <div class="byline">
-      <img class="avatar" src="images/photo.png" alt="Саша Марецкий" width="62" height="62">
-      <span><b>Саша Марецкий — CMO e-commerce marketing</b>Бюджет 10+ млн USD, каждый день трачу эти деньги сам.</span>
+      <a class="avatar-link" href="https://sashamaretski19-wq.github.io/index.html" aria-label="Персональная страница Саши Марецкого">
+        <img class="avatar" src="images/photo.png" alt="Саша Марецкий" width="62" height="62">
+      </a>
+      <span><b><a href="https://sashamaretski19-wq.github.io/index.html">Саша Марецкий — CMO e-commerce marketing</a></b>Бюджет 10+ млн USD, каждый день трачу эти деньги сам.</span>
     </div>
     <div class="hero-cta">
       <a class="btn" href="#next">Написать мне →</a>
