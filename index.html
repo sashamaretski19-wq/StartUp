@@ -341,19 +341,24 @@
 
   /* ---------- not for you ---------- */
   .nots{margin:74px auto 0;max-width:72ch;}
-  .not{display:flex;gap:22px;padding:26px 0;border-top:1px solid var(--hair);}
-  .not i{
-    flex:0 0 auto;width:24px;height:24px;margin-top:3px;border-radius:50%;
-    border:1.5px solid var(--line);position:relative;
+  /* «кому не подойдёт» — раскрывашки: заголовки видно сразу, текст по требованию */
+  .not{border-top:1px solid var(--hair);}
+  .not summary{
+    display:flex;align-items:center;justify-content:space-between;gap:18px;
+    padding:22px 0;cursor:pointer;list-style:none;
   }
-  .not i::before,.not i::after{
-    content:"";position:absolute;left:5px;top:10.2px;width:11px;height:1.5px;
-    background:var(--ink-3);border-radius:2px;
+  .not summary::-webkit-details-marker{display:none;}
+  .not summary::marker{content:'';}
+  .not b{display:block;font-size:19px;font-weight:600;letter-spacing:-.014em;}
+  .not-ic{
+    flex:0 0 auto;width:30px;height:30px;border-radius:50%;
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+    color:var(--ink-3);transition:transform .22s ease,border-color .22s ease,color .22s ease;
   }
-  .not i::before{transform:rotate(45deg);}
-  .not i::after{transform:rotate(-45deg);}
-  .not b{display:block;font-size:19px;font-weight:600;margin-bottom:7px;letter-spacing:-.014em;}
-  .not span{color:var(--ink-2);font-size:17.5px;}
+  .not-ic svg{width:15px;height:15px;display:block;}
+  .not[open] .not-ic{transform:rotate(180deg);border-color:var(--accent);color:var(--accent);}
+  .not:hover .not-ic{border-color:var(--accent);}
+  .not > span{display:block;color:var(--ink-2);font-size:17.5px;padding:0 0 22px;}
 
   /* ---------- cta ---------- */
   .cta{background:var(--cta-bg);color:var(--cta-h);border-top:0;}
@@ -388,6 +393,17 @@
     .cta .links{flex-direction:column;}
     .cta p{font-size:19px;}
     .field input{font-size:26px;}
+
+    /* сплошной текст (не подписи в плитках) — по ширине, с переносами */
+    .lede,.sect-lede,.aside,.solution .body,
+    .pain p,.get p,.card p,.not > span,.calc-note{
+      text-align:justify;
+      hyphens:auto;-webkit-hyphens:auto;
+    }
+    /* цифры калькулятора — по центру, как в блоке «Вердикт» */
+    .calc .field label{text-align:center;}
+    .calc .field .inp{justify-content:center;}
+    .calc .field input{text-align:center;}
   }
 </style>
 </head>
@@ -411,20 +427,20 @@
   <div class="wrap">
     <span class="eyebrow">Growth &amp; Unit-Economics Audit · consumer AI</span>
     <h1>Скажу, при каких допущениях твоя экономика <em>сходится</em></h1>
-    <p class="lede">
-      И что сдвинуть, чтобы сошлась. Разбираю связку CAC → удержание → LTV
-      для consumer AI — с переменной стоимостью инференса внутри модели, а не рядом с ней.
-    </p>
     <div class="byline">
       <a class="avatar-link" href="https://sashamaretski19-wq.github.io/index.html" aria-label="Персональная страница Саши Марецкого">
         <img class="avatar" src="images/photo.png" alt="Саша Марецкий" width="62" height="62">
       </a>
-      <span><b><a href="https://sashamaretski19-wq.github.io/index.html">Саша Марецкий — CMO e-commerce marketing</a></b>Бюджет 10+ млн USD, каждый день трачу эти деньги сам.</span>
+      <span><b><a href="https://sashamaretski19-wq.github.io/index.html">Саша Марецкий — CMO e-commerce/omnichannel retail</a></b>Бюджет 10+ млн USD, каждый день трачу эти деньги сам.</span>
     </div>
     <div class="hero-cta">
       <a class="btn" href="#next">Написать мне →</a>
       <a class="btn ghost" href="demo.html">Посмотреть, как считается</a>
     </div>
+    <p class="lede">
+      И что сдвинуть, чтобы сошлась. Разбираю связку CAC → удержание → LTV
+      для consumer AI — с переменной стоимостью инференса внутри модели, а не рядом с ней.
+    </p>
   </div>
 </header>
 
@@ -682,34 +698,22 @@
     </p>
 
     <div class="nots">
-      <div class="not">
-        <i aria-hidden="true"></i>
-        <div>
-          <b>Если выручки ещё нет</b>
-          <span>Считать нечего: когорт мало, данные шумные, любая экстраполяция превращается в гадание. Аудит на таких данных — красивый документ ни о чём.</span>
-        </div>
-      </div>
-      <div class="not">
-        <i aria-hidden="true"></i>
-        <div>
-          <b>Если нужен подрядчик на закупку трафика</b>
-          <span>Я не веду каналы, не кручу рекламу и не управляю ставками. Могу сказать, какой канал перестал окупаться и почему — но настраивать его будет кто-то другой.</span>
-        </div>
-      </div>
-      <div class="not">
-        <i aria-hidden="true"></i>
-        <div>
-          <b>Если ответ уже известен и нужна валидация</b>
-          <span>За подтверждением своей правоты — не ко мне. Скажу то, что вижу в данных, даже если это ломает планы на квартал. Иногда это неудобно.</span>
-        </div>
-      </div>
-      <div class="not">
-        <i aria-hidden="true"></i>
-        <div>
-          <b>Если данные не выгрузить</b>
-          <span>Без когорт и расходов по каналам модели не будет. Если доступ к цифрам придётся выбивать через три согласования — работа встанет, и платить за это будешь ты.</span>
-        </div>
-      </div>
+      <details class="not">
+        <summary><b>Если выручки ещё нет</b><span class="not-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+        <span>Считать нечего: когорт мало, данные шумные, любая экстраполяция превращается в гадание. Аудит на таких данных — красивый документ ни о чём.</span>
+      </details>
+      <details class="not">
+        <summary><b>Если нужен подрядчик на закупку трафика</b><span class="not-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+        <span>Я не веду каналы, не кручу рекламу и не управляю ставками. Могу сказать, какой канал перестал окупаться и почему — но настраивать его будет кто-то другой.</span>
+      </details>
+      <details class="not">
+        <summary><b>Если ответ уже известен и нужна валидация</b><span class="not-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+        <span>За подтверждением своей правоты — не ко мне. Скажу то, что вижу в данных, даже если это ломает планы на квартал. Иногда это неудобно.</span>
+      </details>
+      <details class="not">
+        <summary><b>Если данные не выгрузить</b><span class="not-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+        <span>Без когорт и расходов по каналам модели не будет. Если доступ к цифрам придётся выбивать через три согласования — работа встанет, и платить за это будешь ты.</span>
+      </details>
     </div>
   </div>
 </section>
@@ -724,8 +728,8 @@
       не вижу — тоже скажу прямо. Без брифов, презентаций и «давайте созвонимся познакомиться».
     </p>
     <div class="links">
-      <a class="btn" href="https://t.me/A_Marecki" target="_blank" rel="noopener">Написать в Telegram</a>
-      <a class="btn ghost" href="mailto:sasha.maretski19@gmail.com?subject=Вопрос%20про%20юнит-экономику">sasha.maretski19@gmail.com</a>
+      <a class="btn" href="https://t.me/A_Marecki" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 4.5 18.9 19.2c-.23 1.02-.83 1.27-1.68.79l-4.64-3.42-2.24 2.16c-.25.25-.46.46-.94.46l.33-4.73L18.6 5.9c.37-.33-.08-.51-.58-.18L6.4 13.06l-4.6-1.44c-1-.31-1.02-1 .21-1.48L20.65 3.05c.83-.31 1.56.2 1.29 1.45Z"/></svg>Telegram</a>
+      <a class="btn ghost" href="mailto:sasha.maretski19@gmail.com?subject=Вопрос%20про%20юнит-экономику"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6 9 7 9-7"/></svg>Gmail</a>
     </div>
     <small>Работаю с consumer AI компаниями, у которых уже есть выручка. Цену и сроки обсуждаем в переписке — после того, как станет понятно, есть ли вообще предмет.</small>
   </div>

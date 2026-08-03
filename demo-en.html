@@ -381,6 +381,17 @@
     .lev-s{grid-column:1;}
     .cta .links{flex-direction:column;}
     .cta p{font-size:18px;}
+
+    /* сплошной текст (не подписи в плитках дека) — по ширине, с переносами */
+    .lede,.sect-lede,.out-note,.cta p,
+    .presets > span,.group > .hint,.lev-s,.asm-row span,.page-foot{
+      text-align:justify;
+      hyphens:auto;-webkit-hyphens:auto;
+    }
+    /* кривая удержания — цифры по центру */
+    .group.nums .field label{text-align:center;}
+    .group.nums .field .inp{justify-content:center;}
+    .group.nums .field input{text-align:center;}
   }
 
   @media (max-width:520px){
@@ -450,7 +461,7 @@
         <div class="preset-row" id="preset-row"></div>
       </div>
 
-      <div class="group">
+      <div class="group nums">
         <h3>Retention curve</h3>
         <p class="hint">
           What share of the cohort is still active 1, 3 and 6 months after acquisition.
@@ -587,8 +598,8 @@
       in that order, or which assumption lies hardest on your data. I'll answer straight.
     </p>
     <div class="links">
-      <a class="btn" href="https://t.me/A_Marecki" target="_blank" rel="noopener">Message me on Telegram</a>
-      <a class="btn ghost" href="mailto:sasha.maretski19@gmail.com?subject=Question%20about%20the%20mini-deck">sasha.maretski19@gmail.com</a>
+      <a class="btn" href="https://t.me/A_Marecki" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 4.5 18.9 19.2c-.23 1.02-.83 1.27-1.68.79l-4.64-3.42-2.24 2.16c-.25.25-.46.46-.94.46l.33-4.73L18.6 5.9c.37-.33-.08-.51-.58-.18L6.4 13.06l-4.6-1.44c-1-.31-1.02-1 .21-1.48L20.65 3.05c.83-.31 1.56.2 1.29 1.45Z"/></svg>Telegram</a>
+      <a class="btn ghost" href="mailto:sasha.maretski19@gmail.com?subject=Question%20about%20the%20mini-deck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6 9 7 9-7"/></svg>Gmail</a>
     </div>
     <small>I work with consumer AI companies that already have revenue. Price and timeline we settle over email — once it's clear there's something to work on at all.</small>
   </div>
