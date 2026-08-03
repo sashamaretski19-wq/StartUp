@@ -220,6 +220,9 @@
   }
   .btn:hover{transform:translateY(-1px);opacity:.92;}
   .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);}
+  /* Значкам обязателен явный размер: без него svg без width/height раздувается
+     до размеров кнопки на телефоне и схлопывается в ноль на десктопе. */
+  .btn svg{width:18px;height:18px;flex:0 0 auto;}
   /* два входа с первого экрана: написать — и сразу потрогать расчёт */
   .hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:44px;}
   .hero-cta .btn{margin-top:0;}

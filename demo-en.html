@@ -193,6 +193,9 @@
   .btn:hover{transform:translateY(-1px);opacity:.92;}
   .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);}
   .btn.ghost:hover{border-color:var(--ink-3);}
+  /* Значкам обязателен явный размер: без него svg без width/height раздувается
+     до размеров кнопки на телефоне и схлопывается в ноль на десктопе. */
+  .btn svg{width:18px;height:18px;flex:0 0 auto;}
   .btn.sm{padding:11px 20px;font-size:15px;}
 
   /* ---------- form ---------- */
