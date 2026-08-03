@@ -390,8 +390,9 @@
     }
     /* кривая удержания — цифры по центру */
     .group.nums .field label{text-align:center;}
-    .group.nums .field .inp{justify-content:center;}
-    .group.nums .field input{text-align:center;}
+    /* Поле сжимается по содержимому, чтобы % стоял вплотную к числу. */
+    .group.nums .field .inp{justify-content:center;gap:5px;}
+    .group.nums .field input{flex:0 0 auto;width:3ch;min-width:1.5ch;text-align:center;}
   }
 
   @media (max-width:520px){
@@ -1139,7 +1140,23 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
     });
   });
 
+  // На телефоне поля кривой удержания подгоняются под содержимое,
+  // иначе число центрируется в широком поле, а знак % уезжает к краю.
+  var narrow = window.matchMedia('(max-width:900px)');
+  function fitNums(){
+    ['r1','r3','r6'].forEach(function(k){
+      var el = document.getElementById(k);
+      el.style.width = narrow.matches
+        ? Math.max(String(el.value === '' ? '0' : el.value).length, 1) + 'ch'
+        : '';
+    });
+  }
+  els.form.addEventListener('input', fitNums);
+  if (narrow.addEventListener) narrow.addEventListener('change', fitNums);
+  else if (narrow.addListener) narrow.addListener(fitNums);
+
   renderPresets();
+  fitNums();
   shareSum();
   if (fromHash()) render(false);   // arrived via a shared calculation — show the deck right away
 })();

@@ -402,8 +402,10 @@
     }
     /* цифры калькулятора — по центру, как в блоке «Вердикт» */
     .calc .field label{text-align:center;}
-    .calc .field .inp{justify-content:center;}
-    .calc .field input{text-align:center;}
+    /* Поле сжимается по содержимому, поэтому $ и % стоят вплотную к числу
+       и «$60» читается одним блоком. Точную ширину доставляет скрипт ниже. */
+    .calc .field .inp{justify-content:center;gap:5px;}
+    .calc .field input{flex:0 0 auto;width:3ch;min-width:1.5ch;text-align:center;}
   }
 </style>
 </head>
@@ -817,9 +819,23 @@ document.getElementById('theme-btn').addEventListener('click', function(){ windo
       : ('Acquisition never pays back within ' + HORIZON + ' months');
   }
 
+  // На телефоне поле подгоняется под содержимое — иначе число центрируется
+  // в широком поле, а знак валюты остаётся далеко у края.
+  var narrow = window.matchMedia('(max-width:900px)');
+  function fitOne(el){
+    el.style.width = narrow.matches
+      ? Math.max(String(el.value === '' ? '0' : el.value).length, 1) + 'ch'
+      : '';
+  }
+  function fitAll(){ ['cac','arpu','ret','inf'].forEach(function(k){ fitOne(els[k]); }); }
+
   ['cac','arpu','ret','inf'].forEach(function(k){
-    els[k].addEventListener('input', recalc);
+    els[k].addEventListener('input', function(){ fitOne(this); recalc(); });
   });
+  if (narrow.addEventListener) narrow.addEventListener('change', fitAll);
+  else if (narrow.addListener) narrow.addListener(fitAll);
+
+  fitAll();
   recalc();
 })();
 </script>
